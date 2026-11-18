@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -60,11 +61,21 @@ public class FourWins extends JPanel {
             if(board[r][col] == 0) {
                 board[r][col] = this.player;
                 if(this.wins(r, col)) this.winner = this.player;
+                else if(this.filled()) this.winner = -1;
                 this.player = 3 - this.player;
                 this.repaint();
                 return;
             }
         }
+    }
+
+    public boolean filled() {
+        for(int[] arr : this.board) {
+            for(int x : arr) {
+                if(x == 0) return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -116,16 +127,24 @@ public class FourWins extends JPanel {
         g.fill(new RoundRectangle2D.Double(0, CELL, COLS * CELL, ROWS * CELL, 30, 30));
         for(int r = 0; r < ROWS; r++) {
             for(int c = 0; c < COLS; c++) {
-                g.setColor(board[r][c] == 0 ? getBackground() : color(board[r][c]));
+                g.setColor(this.board[r][c] == 0 ? getBackground() : color(this.board[r][c]));
                 g.fillOval(c * CELL + PAD, (r + 1) * CELL + PAD, CELL - 2 * PAD, CELL - 2 * PAD);
             }
         }
 
         if(winner != 0) {
-            String text = (winner == 1 ? "Rot" : "Gelb") + " gewinnt!";
+            if(this.winner == -1) {
+                String text = "Unentschieden";
+                g.setFont(new Font("Arial", Font.ITALIC, 26));
+                int w = g.getFontMetrics().stringWidth(text);
+                g.setColor(Color.WHITE);
+                g.drawString(text, (getWidth() - w) / 2, CELL / 2 + 10);
+                return;
+            }
+            String text = (this.winner == 1 ? "Rot" : "Gelb") + " gewinnt!";
             g.setFont(new Font("Arial", Font.BOLD, 26));
             int w = g.getFontMetrics().stringWidth(text);
-            g.setColor(color(winner));
+            g.setColor(color(this.winner));
             g.drawString(text, (getWidth() - w) / 2, CELL / 2 + 10);
         }
     }
@@ -138,7 +157,7 @@ public class FourWins extends JPanel {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame f = new JFrame("4 Wins");
-            f.setIconImage(Toolkit.getDefaultToolkit().getImage("filePath"));
+            f.setIconImage(Toolkit.getDefaultToolkit().getImage(new File("4wins.ico").getAbsolutePath()));
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.add(new FourWins());
             f.pack();
