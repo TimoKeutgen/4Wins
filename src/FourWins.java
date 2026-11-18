@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -11,10 +10,14 @@ import java.util.Arrays;
  */
 public class FourWins extends JPanel {
 
+    public static final Image ICON_IMAGE = Toolkit.getDefaultToolkit().getImage("4wins.ico");
     private static final int ROWS = 6;
     private static final int COLS = 7;
     private static final int CELL = 90;
     private static final int PAD = 10;
+
+    /* Settings */
+    public static boolean tetrisMode = false;
 
     private final int[][] board = new int[ROWS][COLS];
     private int player = 1;
@@ -61,7 +64,8 @@ public class FourWins extends JPanel {
             if(board[r][col] == 0) {
                 board[r][col] = this.player;
                 if(this.wins(r, col)) this.winner = this.player;
-                else if(this.filled()) this.winner = -1;
+                else if(tetrisMode && this.isFirstLineFilled()) this.removeFirstLine();
+                else if(this.filled()) this.winner = this.player;
                 this.player = 3 - this.player;
                 this.repaint();
                 return;
@@ -69,13 +73,27 @@ public class FourWins extends JPanel {
         }
     }
 
-    public boolean filled() {
+    private boolean filled() {
         for(int[] arr : this.board) {
             for(int x : arr) {
                 if(x == 0) return false;
             }
         }
         return true;
+    }
+
+    private boolean isFirstLineFilled() {
+        for(int x : this.board[ROWS-1]) {
+            if(x == 0) return false;
+        }
+        return true;
+    }
+
+    private void removeFirstLine() {
+        for(int r = ROWS - 1; r > 0; r--) {
+            this.board[r] = this.board[r - 1];
+        }
+        this.board[0] = new int[COLS];
     }
 
     /**
@@ -157,9 +175,10 @@ public class FourWins extends JPanel {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame f = new JFrame("4 Wins");
-            f.setIconImage(Toolkit.getDefaultToolkit().getImage(new File("4wins.ico").getAbsolutePath()));
+            f.setIconImage(ICON_IMAGE);
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.add(new FourWins());
+            f.setJMenuBar(new MenuBar());
             f.pack();
             f.setResizable(false);
             f.setLocationRelativeTo(null);
