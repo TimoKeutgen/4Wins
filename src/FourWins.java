@@ -65,7 +65,7 @@ public class FourWins extends JPanel {
                 board[r][col] = this.player;
                 if(this.wins(r, col)) this.winner = this.player;
                 else if(tetrisMode && this.isFirstLineFilled()) this.removeFirstLine();
-                else if(this.filled()) this.winner = this.player;
+                else if(this.filled()) this.winner = -1;
                 this.player = 3 - this.player;
                 this.repaint();
                 return;
