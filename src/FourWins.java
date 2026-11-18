@@ -5,6 +5,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Arrays;
 
+/**
+ * Class to play 4Wins
+ */
 public class FourWins extends JPanel {
 
     private static final int ROWS = 6;
@@ -43,7 +46,6 @@ public class FourWins extends JPanel {
         addMouseMotionListener(mouse);
     }
 
-    /* GAME FUNCTIONS */
     /**
      * Drop in a column
      * @param col clicked column
@@ -120,7 +122,7 @@ public class FourWins extends JPanel {
         }
 
         if(winner != 0) {
-            String text = (winner == 1 ? "Rot" : "Grün") + " gewinnt!";
+            String text = (winner == 1 ? "Rot" : "Gelb") + " gewinnt!";
             g.setFont(new Font("Arial", Font.BOLD, 26));
             int w = g.getFontMetrics().stringWidth(text);
             g.setColor(color(winner));
@@ -129,13 +131,14 @@ public class FourWins extends JPanel {
     }
 
     private Color color(int p) {
-        return p == 1 ? Color.RED : Color.GREEN;
+        return p == 1 ? Color.RED : Color.YELLOW;
     }
 
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame f = new JFrame("4 Wins");
+            f.setIconImage(Toolkit.getDefaultToolkit().getImage("filePath"));
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.add(new FourWins());
             f.pack();
